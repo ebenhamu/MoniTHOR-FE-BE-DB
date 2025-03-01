@@ -53,19 +53,9 @@ def BElogin():
 def BEresults(username):
     if user.is_user_exist(username)['message']!="User exist" :        
         return "No User is logged in" 
-    
-    user_file = f'./userdata/{username}_domains.json'
-    if os.path.exists(user_file):
-        with open(user_file, 'r') as f:
-            data1 = json.load(f)
-    else:
-        data = []
+    else:   
+        data = db_get_domains(username)   
 
-
-  
-    
-    print("******************fdgdfg**********************")
-    data=db_get_domains(username)
     data = [
     {
         'domain': domain[0],
@@ -75,19 +65,11 @@ def BEresults(username):
     }
     for domain in data ]
 
-    #data= json.dumps(data, indent=4)
-    data2=data
-    data=data
-    print("**********************************************************")
-    print(data1)
-    print("**********************************************************")
-    print(data2)
-    print("**********************************************************")
-    all_domains = [item['domain'] for item in data]
-
-    latest_results = data[:6]
-    failuresCount = sum(1 for item in data if item.get('status_code') == 'FAILED')
+    #data= json.dumps(data, indent=4)     
     
+    all_domains = [item['domain'] for item in data]
+    latest_results = data[:6]
+    failuresCount = sum(1 for item in data if item.get('status_code') == 'FAILED')    
     failuresPrecent = round(float(failuresCount) / len(all_domains) * 100, 1) if len(all_domains) > 0 else 0
     lastRunInfo = f"{globalInfo['runInfo'][0]}, {globalInfo['runInfo'][1]} Domains, {failuresPrecent}% failures"
 

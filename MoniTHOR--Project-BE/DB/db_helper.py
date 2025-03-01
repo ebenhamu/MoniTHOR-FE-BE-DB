@@ -1,4 +1,5 @@
 import psycopg2
+import logger.logs 
 
 class PostgresDB:
     def __init__(self, storedb, myuser, mypassword, host='localhost', port='5432'):
@@ -18,7 +19,7 @@ class PostgresDB:
                 host=self.host,
                 port=self.port
             )
-            print("Connection successful")
+            
         except Exception as e:
             print(f"Error connecting to database: {e}")
 
@@ -45,8 +46,8 @@ class PostgresDB:
 
     def close(self):
         if self.connection:
-            self.connection.close()
-            print("Connection closed")
+            self.connection.close()           
+            
 
 
    
@@ -77,7 +78,8 @@ def db_is_user_exist(username):
     return len(data) > 0
     
 
-def db_update_domain(username, domain_name, status_code, ssl_expiration, ssl_issuer):
+def db_update_domain(username, domain_name, status_code, ssl_expiration, ssl_issuer):    
+    print (username , domain_name )
     db = PostgresDB("storedb", "myuser", "mypassword")
     db.connect()
     query = """
@@ -124,6 +126,7 @@ def db_get_domains(username):
 # # Example usage:
 # if __name__ == "__main__":
 #     print(get_user_password('David'))
-#     update_domain('David','google.com','dd','ff','ss')
+#db_update_domain('David','facebook.com','dadssssd','ff','ss')
+#add_user('dddd','dddd')
 #     remove_domain('David','google.com')
 #     print(get_domains('David'))
