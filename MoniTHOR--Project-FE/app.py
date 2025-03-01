@@ -398,11 +398,7 @@ def upload():
 
 def add_new_domain(domainName,userName):
     url= f'http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}//BEadd_domain/{domainName}/{userName}'    
-    response  = requests.get(url)         
-    print("*********************************************************************************************")
-    print(response)
-    print("*********************************************************************************************")
-    
+    response  = requests.get(url)          
     return response.json()
 
 

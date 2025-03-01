@@ -27,8 +27,7 @@ def add_domain (userName,domain) :
 
     
     
-    if len(currentListOfDomains) < 100 :
-        print(len(currentListOfDomains))
+    if len(currentListOfDomains) < 100 :        
         db_add_domain(userName,domain)              
         return successMessage
 
@@ -37,37 +36,20 @@ def add_domain (userName,domain) :
 def remove_domain (userName,domain) :
     logger.debug(f'Function is invoked {userName}, {domain}')
     successMessage = { 'message' : "Domain successfully removed"}
-    notInFileMessage = { 'message' : "Domain not in file"}
+    errorOnRemoveMessage = { 'message' : "Error in remove domain from DB"}
     failureMessageNotValid = { 'message' : "Invalid Domain Name"}
-    domainsFileisNotExist  = { 'message' : "Domains file is not exist"}
-    
+        
     domain=domain.replace('"','')
     
     if not is_valid_domain(domain):
-        return failureMessageNotValid
-
-    userDomainsFile=f'./userdata/{userName}_domains.json'
+        return failureMessageNotValid   
+     
+    try:   
+        db_remove_domain(userName,domain)       
+        return successMessage
     
-    if not os.path.exists(userDomainsFile):
-        return domainsFileisNotExist
-
-
-
-    with open(userDomainsFile, 'r') as f:
-        current_info = json.load(f)
-        currentListOfDomains=list(current_info)
-        newList=[]
-        
-    msg=notInFileMessage
-    for d in currentListOfDomains :        
-        if d['domain'] == domain:
-            msg=successMessage
-        else:
-            newList.append(d) 
-       
-    with open(userDomainsFile, 'w') as f:
-        json.dump(newList, f, indent=4)        
-        return msg
+    except:
+        return errorOnRemoveMessage
 # function to read from file a list of domain and add to domain file.
 
 def add_bulk(userName,fileName):

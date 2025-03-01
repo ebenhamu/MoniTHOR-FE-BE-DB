@@ -68,8 +68,10 @@ def BEresults(username):
     #data= json.dumps(data, indent=4)     
     
     all_domains = [item['domain'] for item in data]
+
     latest_results = data[:6]
-    failuresCount = sum(1 for item in data if item.get('status_code') == 'FAILED')    
+    failuresCount = sum(1 for item in data if item.get('status_code') == 'FAILED')
+    
     failuresPrecent = round(float(failuresCount) / len(all_domains) * 100, 1) if len(all_domains) > 0 else 0
     lastRunInfo = f"{globalInfo['runInfo'][0]}, {globalInfo['runInfo'][1]} Domains, {failuresPrecent}% failures"
 

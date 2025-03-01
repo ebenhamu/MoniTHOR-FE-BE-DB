@@ -39,8 +39,7 @@ class PostgresDB:
             cursor = self.connection.cursor()
             cursor.execute(query, data)
             self.connection.commit()
-            cursor.close()
-            print("Update successful")
+            cursor.close()            
         except Exception as e:
             print(f"Error updating data: {e}")
 
@@ -78,8 +77,7 @@ def db_is_user_exist(username):
     return len(data) > 0
     
 
-def db_update_domain(username, domain_name, status_code, ssl_expiration, ssl_issuer):    
-    print (username , domain_name )
+def db_update_domain(username, domain_name, status_code, ssl_expiration, ssl_issuer):        
     db = PostgresDB("storedb", "myuser", "mypassword")
     db.connect()
     query = """

@@ -19,17 +19,9 @@ def livness_check (username):
     start_date_time = datetime.now(timezone.utc).strftime("%d/%m/%Y %H:%M")
     start_time = time.time()    
     urls_queue = Queue()
-    analyzed_urls_queue = Queue()  
-      
-         
-    
-    
-    data = db_get_domains(username)   
-
-    
-
-
-
+    analyzed_urls_queue = Queue()                 
+   
+    data = db_get_domains(username)      
 
     for d in data :        
         urls_queue.put(d[0]) 
