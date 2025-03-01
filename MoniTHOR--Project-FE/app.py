@@ -263,7 +263,7 @@ def results():
     if response.status_code == 200:
         resdata = response.json()        
     else:
-        logger.log(f'Error: {response.status_code}')
+        logger.info(f'Error: {response.status_code}')
 
     data=resdata['data']
 
@@ -399,6 +399,10 @@ def upload():
 def add_new_domain(domainName,userName):
     url= f'http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}//BEadd_domain/{domainName}/{userName}'    
     response  = requests.get(url)         
+    print("*********************************************************************************************")
+    print(response)
+    print("*********************************************************************************************")
+    
     return response.json()
 
 

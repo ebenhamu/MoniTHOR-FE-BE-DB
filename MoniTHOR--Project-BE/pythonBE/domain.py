@@ -2,6 +2,7 @@ import os
 import json
 import re
 from logger.logs import logger
+from DB.db_helper import db_add_domain,db_remove_domain,db_get_domains,db_update_domain
 
 
 def add_domain (userName,domain) :
@@ -16,35 +17,19 @@ def add_domain (userName,domain) :
         return failureMessageNotValid
 
     
-    userDomainsFile=f'./userdata/{userName}_domains.json'
     
-    
-    
-    if not os.path.exists(userDomainsFile) :
-         with open(userDomainsFile, 'w') as f:
-            f.write("{}")
+    currentListOfDomains=db_get_domains(userName)      
 
-
-
-    with open(f'{userDomainsFile}', 'r') as f:
-        current_info = json.load(f)
-        currentListOfDomains=list(current_info)       
-        
        
     for d in currentListOfDomains :             
-        if d['domain'] == domain:            
+        if d[0] == domain:            
             return failureMessageExist
 
-    newDomain ={'domain':domain,'status':'unknown','ssl_expiration':'unknown','ssl_issuer':'unknown' }
+    
     
     if len(currentListOfDomains) < 100 :
-        currentListOfDomains.append(newDomain)             
-    
-
-    with open(userDomainsFile, 'w') as f:        
-        json.dump(currentListOfDomains, f, indent=4)
-        logger.debug(f'The {domain} Upload To {userDomainsFile} By {userName}')        
-      
+        print(len(currentListOfDomains))
+        db_add_domain(userName,domain)              
         return successMessage
 
 

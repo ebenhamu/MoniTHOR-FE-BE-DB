@@ -68,7 +68,7 @@ def add_user(username, password):
     db.close()
     
     
-def is_user_exists(username):
+def db_is_user_exist(username):
     db = PostgresDB("storedb", "myuser", "mypassword")
     db.connect()
     query = "SELECT 1 FROM users WHERE username = %s"
@@ -77,7 +77,7 @@ def is_user_exists(username):
     return len(data) > 0
     
 
-def update_domain(username, domain_name, status_code, ssl_expiration, ssl_issuer):
+def db_update_domain(username, domain_name, status_code, ssl_expiration, ssl_issuer):
     db = PostgresDB("storedb", "myuser", "mypassword")
     db.connect()
     query = """
@@ -91,9 +91,20 @@ def update_domain(username, domain_name, status_code, ssl_expiration, ssl_issuer
     db.update_data(query, data)
     db.close()
 
+def db_add_domain(username, domain_name, status_code='unknown', ssl_expiration='unknown', ssl_issuer='unknown'):
+    db = PostgresDB("storedb", "myuser", "mypassword")
+    db.connect()
+    query = """
+        INSERT INTO domains (username, domain_name, status_code, ssl_expiration, ssl_issuer)
+        VALUES (%s, %s, %s, %s, %s);
+    """
+    data = (username, domain_name, status_code, ssl_expiration, ssl_issuer)
+    db.update_data(query, data)
+    db.close()
 
 
-def remove_domain(username, domain_name):
+
+def db_remove_domain(username, domain_name):
     db = PostgresDB("storedb", "myuser", "mypassword")
     db.connect()
     query = "DELETE FROM domains WHERE domain_name = %s AND username = %s"
@@ -101,7 +112,7 @@ def remove_domain(username, domain_name):
     db.update_data(query, data)
     db.close()
 
-def get_domains(username):
+def db_get_domains(username):
     db = PostgresDB("storedb", "myuser", "mypassword")
     db.connect()
     query = "SELECT domain_name, status_code, ssl_expiration, ssl_issuer FROM domains WHERE username = %s"

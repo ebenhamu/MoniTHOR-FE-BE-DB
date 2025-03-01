@@ -1,7 +1,7 @@
 import os
 import json
 from logger.logs import logger
-from  DB.db_helper import add_user,get_user_password,is_user_exists
+from  DB.db_helper import add_user,get_user_password,db_is_user_exist
 
   
 def register_user (userName,password1,password2) :
@@ -15,7 +15,7 @@ def register_user (userName,password1,password2) :
     if password1 != password2:
         return passwordMessage
    
-    if (is_user_exists(userName)):
+    if (db_is_user_exist(userName)):
         return failureMessage
     
     # check if the user name and password empty 
@@ -38,7 +38,7 @@ def login_user (userName,password) :
     
 
     # get user password from DB
-    logger.log("Getting user password from DB")
+    logger.info("Getting user password from DB")
     if (password==get_user_password(userName)):
         return successMessage
     else:
@@ -51,20 +51,9 @@ def is_user_exist (userName) :
         
     logger.debug(f'Cheking if user {userName} exist')
     successMessage = { 'message' : "User exist"}
-    failureMessage = { 'message' : "User or User file is not exist"} 
+    failureMessage = { 'message' : "User is not exist"} 
     
-        
-    # Create users file if not exist 
-    if not os.path.exists('./users.json'):
+    if db_is_user_exist(userName):                
+       return successMessage             
+    else:
         return failureMessage
-        
-    # loadin current data fro users file and convert to list 
-    with open('users.json', 'r') as f:
-        current_info = json.load(f)
-        currentListOfUsers=list(current_info)   
-    
-    # checking is user in file , if yes , validating password 
-    for user in currentListOfUsers :            
-        if user['username'] == userName:    
-            return successMessage             
-    return failureMessage
