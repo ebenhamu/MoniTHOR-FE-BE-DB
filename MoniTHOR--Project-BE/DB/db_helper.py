@@ -110,9 +110,9 @@ def get_domains(username):
     return data
 
 
-# Example usage:
-if __name__ == "__main__":
-    print(get_user_password('David'))
-    update_domain('David','google.com','dd','ff','ss')
-    remove_domain('David','google.com')
-    print(get_domains('David'))
+# # Example usage:
+# if __name__ == "__main__":
+#     print(get_user_password('David'))
+#     update_domain('David','google.com','dd','ff','ss')
+#     remove_domain('David','google.com')
+#     print(get_domains('David'))

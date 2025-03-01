@@ -7,15 +7,12 @@ import time
 from pythonBE import check_certificate 
 import os
 from logger.logs import logger
-from elasticapm import capture_span, traces
 
 # livness and ssl info function , for single domain file "all=False" , for domains file "all=True"
 # function will read Domain/Domains file and will update relevant fields in file 
 # 'domain','status_code',"ssl_expiration","ssl_Issuer" 
 
-def livness_check (username, apm_context=None, client=None):
-    traces.execution_context.set_transaction(apm_context)
-    client=client
+def livness_check (username):
     # Measure start time
     logger.debug(f'Function "livness_check" is invoked by User- {username}')
     start_date_time = datetime.now(timezone.utc).strftime("%d/%m/%Y %H:%M")
@@ -30,34 +27,32 @@ def livness_check (username, apm_context=None, client=None):
         
     with open(fileToCheck, 'r') as f:
         currentListOfDomains=list(json.load(f))       
-    
+     
     for d in currentListOfDomains :        
         urls_queue.put(d['domain']) 
-        
+         
     numberOfDomains=urls_queue.qsize()
     logger.info(f"Total URLs to check: {numberOfDomains}")
 
     # Define the URL checking function with a timeout and result storage
-    def check_url(apm_context, client):
-        traces.execution_context.set_transaction(apm_context)
+    def check_url():
         while not urls_queue.empty():
             url = urls_queue.get()
-            with capture_span(f"{url}"):
-                                    
-                
-                result = {'domain': url, 'status_code': 'FAILED' ,"ssl_expiration":'FAILED',"ssl_Issuer": 'FAILED' }  # Default to FAILED
-                
-                try:
-                    response = requests.get(f'http://{url}', timeout=5)
-                    logger.info(f"URL To Check:{url}")
-                    if response.status_code == 200:                    
-                        certInfo=check_certificate.certificate_check(url) 
-                        result = {'domain': url, 'status_code': 'OK' ,"ssl_expiration":certInfo[0],"ssl_Issuer": certInfo[1][:30]}  # Default to FAILED
-                except requests.exceptions.RequestException:
-                    result['status_code'] = 'FAILED'
-                finally:
-                    analyzed_urls_queue.put(result)  # Add result to analyzed queue
-                    urls_queue.task_done()
+                                   
+            
+            result = {'domain': url, 'status_code': 'FAILED' ,"ssl_expiration":'FAILED',"ssl_Issuer": 'FAILED' }  # Default to FAILED
+            
+            try:
+                response = requests.get(f'http://{url}', timeout=10)
+                logger.info(f"URL To Check:{url}")
+                if response.status_code == 200:                    
+                    certInfo=check_certificate.certificate_check(url) 
+                    result = {'domain': url, 'status_code': 'OK' ,"ssl_expiration":certInfo[0],"ssl_Issuer": certInfo[1][:30]}  # Default to FAILED
+            except requests.exceptions.RequestException:
+                result['status_code'] = 'FAILED'
+            finally:
+                analyzed_urls_queue.put(result)  # Add result to analyzed queue
+                urls_queue.task_done()
 
     # Generate report after all URLs are analyzed
     def generate_report():
@@ -77,7 +72,7 @@ def livness_check (username, apm_context=None, client=None):
     # Run URL checks in parallel
     with concurrent.futures.ThreadPoolExecutor(max_workers=100) as liveness_threads_pool:
         # Submit URL check tasks
-        futures = [liveness_threads_pool.submit(check_url, apm_context, client,) for _ in range(100)]
+        futures = [liveness_threads_pool.submit(check_url) for _ in range(100)]
         # Generate report after tasks complete
         liveness_threads_pool.submit(generate_report)
 

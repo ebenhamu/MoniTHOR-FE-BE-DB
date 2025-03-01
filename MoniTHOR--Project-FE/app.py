@@ -11,31 +11,11 @@ import pytz
 import uuid
 from datetime import datetime 
 import socket
-from elasticapm.contrib.flask import ElasticAPM
-import logging
-
-# Set up APM debugging
-logging.getLogger('elasticapm').setLevel(logging.DEBUG)
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 # __name__ helps Flask locate resources and configurations
-app = Flask(__name__)
-
-app.config['ELASTIC_APM'] = {
-  'SERVICE_NAME': 'Monothor-Fe',
-  'API_KEY': 'RmY0Q0NaVUJLaTZSRzdmcEpuU0c6REhuQnp4M3poRDZHSHZlRGxHdHo5Zw==',
-  'SERVER_URL': 'https://my-observability-project-bbb56a.apm.us-west-2.aws.elastic.cloud:443',
-  'ENVIRONMENT': 'Test',
-  'TRANSACTIONS_SAMPLE_RATE': 1.0,
-  'DEBUG': True,
-}
-
-
-apm = ElasticAPM(app, logging=True)
-
-
-apm.capture_message('Test message')
+app = Flask(__name__)  
 
 # Load environment variables from .env file
 if os.path.exists('.env'):
@@ -74,13 +54,6 @@ client = WebApplicationClient(GOOGLE_CLIENT_ID)
 scheduler = BackgroundScheduler()
 scheduler.start()
 scheduled_jobs = [] # Store scheduled jobs
-
-
-
-@app.route('/test')
-def test():
-    with apm.capture_span('test span'):
-        return jsonify({'status': 'ok'}), 200
 
 # Route for Job schedule 
 @app.route('/schedule_bulk_monitoring', methods=['POST'])
@@ -174,7 +147,7 @@ def google_callback():
         logger.info(f'{userinfo["email"]} Login With Google Account')       
 
         # URL of the BEregister endpoint
-        url=f"http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BEregister"
+        url=f'http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BEregister'
 
         # Data to be sent in the request
         data = {
@@ -266,16 +239,9 @@ def main():
 @app.route('/check/<username>', methods=['GET'])
 def check_livness(username):    
     if session['user']=="" :
-        return "No User is logged in"     
-    url= f"http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BEcheck"
-    data={
-        'username':username
-    }
-    headers = {
-            'Content-Type': 'application/json'
-        }
-    respponse  = requests.get(url, headers=headers, data=json.dumps(data))  
-    
+        return "No User is logged in" 
+    url= f'http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BEcheck/{username}'
+    respponse  = requests.get(url)        
     info=respponse.json()
     globalInfo['runInfo']=f"{info['start_date_time']} "#,{info['numberOfDomains']}"      
     return info
@@ -292,7 +258,7 @@ def results():
 
     username=session['user']   
 
-    url= f"http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BEresults/{username}"
+    url= f'http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BEresults/{username}'
     response = requests.get(url)
     if response.status_code == 200:
         resdata = response.json()        
@@ -339,7 +305,7 @@ def register_user():
     password1 = data.get('password1')
     password2 = data.get('password2') 
     logger.info("Registering user {username}")    
-    url=f"http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BEregister"
+    url=f'http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BEregister'
 
     # Data to be sent in the request
     data = {
@@ -365,7 +331,7 @@ def login_user():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')         
-    url=f"http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BElogin" 
+    url=f'http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BElogin'    
     # Data to be sent in the request
     data = {
        'username':username,
@@ -400,7 +366,7 @@ def submit_data():
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    url=f"http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BEupload"
+    url=f'http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BEupload'
 
     if 'file' not in request.files or request.files['file'].filename == '':
         return {"error": "No file provided"}, 400
@@ -431,7 +397,7 @@ def upload():
 @app.route('/add_domain/<domainName>/<userName>',methods=['GET', 'POST'])
 
 def add_new_domain(domainName,userName):
-    url= f"http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}//BEadd_domain/{domainName}/{userName}"
+    url= f'http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}//BEadd_domain/{domainName}/{userName}'    
     response  = requests.get(url)         
     return response.json()
 
@@ -440,19 +406,13 @@ def add_new_domain(domainName,userName):
 @app.route('/remove_domain/<domainName>/<userName>',methods=['GET', 'POST'])
 
 def remove_domain(domainName,userName):    
-    url= f"http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}//BEremove_domain/{domainName}/{userName}"    
+    url= f'http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}//BEremove_domain/{domainName}/{userName}'      
     response  = requests.get(url)         
     return response.json()
 
 def Checkjob(username):       
-    url= f"http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BEcheck"
-    data={
-        'username':username
-    }
-    headers = {
-            'Content-Type': 'application/json'
-        }
-    respponse  = requests.get(url, headers=headers, data=json.dumps(data))       
+    url= f'http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BEcheck/{username}'
+    respponse  = requests.get(url)        
     info=respponse.json()
     globalInfo['runInfo']=f"{info['start_date_time']} ,{info['numberOfDomains']}"          
     return info
