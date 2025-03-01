@@ -6,7 +6,7 @@ with open('config.json', 'r') as config_file:
     config = json.load(config_file)
 
 class PostgresDB:
-    def __init__(self, storedb, myuser, mypassword, host=config['DB_SERVER'], port='5432'):
+    def __init__(self, storedb, myuser, mypassword, host=config['DB_SERVER'], port=config['DB_PORT']):
         self.dbname = storedb
         self.user = myuser
         self.password = mypassword
