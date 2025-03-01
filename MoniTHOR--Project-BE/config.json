@@ -7,7 +7,9 @@
     "UPLOAD_FOLDER" :"./userdata/uploads",
     "LOG_LEVEL":"INFO",
     "LOG_FILE":"./logger/monithor_be.log",
-    "LOG_FORMAT":"[Time: %(asctime)s, File: %(filename)s:%(lineno)d, Function: %(funcName)s] %(levelname)-s - %(message)s"
+    "LOG_FORMAT":"[Time: %(asctime)s, File: %(filename)s:%(lineno)d, Function: %(funcName)s] %(levelname)-s - %(message)s",
+    "DB_PORT": 5432 ,
+    "DB_SERVER": "localhost"
 
 }
 

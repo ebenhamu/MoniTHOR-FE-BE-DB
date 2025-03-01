@@ -1,8 +1,12 @@
 import psycopg2
+import json
 import logger.logs 
 
+with open('config.json', 'r') as config_file:
+    config = json.load(config_file)
+
 class PostgresDB:
-    def __init__(self, storedb, myuser, mypassword, host='localhost', port='5432'):
+    def __init__(self, storedb, myuser, mypassword, host=config['DB_SERVER'], port='5432'):
         self.dbname = storedb
         self.user = myuser
         self.password = mypassword
