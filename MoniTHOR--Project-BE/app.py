@@ -164,10 +164,11 @@ def add_from_file(filename,username):
 # Route to run Livness check 
 # @function.measure_this()
 
-@app.route('/BEcheck/<username>')
+@app.route('/BEcheck')
 @utils.measure_this
-
-def check_livness(username):    
+def check_livness():    
+    data = request.get_json()
+    username = data.get('username')
     if user.is_user_exist(username)['message']!="User exist" :
        return "User does not exist"             
     runInfo=check_liveness.livness_check (username)            
