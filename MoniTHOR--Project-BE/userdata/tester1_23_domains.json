@@ -1,8 +1,0 @@
-[
-    {
-        "domain": "nasa.gov",
-        "status_code": "OK",
-        "ssl_expiration": "2025-05-01 08:07:44",
-        "ssl_Issuer": "Let's Encrypt"
-    }
-]

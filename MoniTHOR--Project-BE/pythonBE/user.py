@@ -1,7 +1,7 @@
 import os
 import json
 from logger.logs import logger
-from  DB.db_helper import add_user,get_user_password,db_is_user_exist
+from  DB.db_helper import db_add_user,get_user_password,db_is_user_exist
 
   
 def register_user (userName,password1,password2) :
@@ -24,7 +24,7 @@ def register_user (userName,password1,password2) :
     
 
     
-    add_user(userName,password1)
+    db_add_user(userName,password1)
     logger.info(f'New User is created - {userName}')       
     return successMessage
 
