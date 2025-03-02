@@ -10,6 +10,7 @@ def add_domain (userName,domain) :
     successMessage = { 'message' : "Domain successfully added"}
     failureMessageExist = { 'message' : "Domain already exist in file"}
     failureMessageNotValid = { 'message' : "Invalid Domain Name"}
+    failureMessageExistListisFull = {{ 'message' : "List of domain is full"}}
     
     domain=domain.replace('"','')
     
@@ -30,6 +31,9 @@ def add_domain (userName,domain) :
     if len(currentListOfDomains) < 100 :        
         db_add_domain(userName,domain)              
         return successMessage
+    else:
+        failureMessageExistListisFull
+
 
 
 

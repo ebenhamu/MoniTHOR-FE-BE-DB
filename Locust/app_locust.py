@@ -20,7 +20,7 @@ class MyUser(HttpUser):
         all_characters = '0123456789'
         # Generate a random password
         tag = ''.join(random.choice(all_characters) for _ in range(2))
-        username='tester_'+tag
+        username='tester1_'+tag
         
         url= f"http://127.0.0.1:5000/BEcheck"
         data={

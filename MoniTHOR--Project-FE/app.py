@@ -418,8 +418,15 @@ def remove_domain(domainName,userName):
     return response.json()
 
 def Checkjob(username):       
-    url= f'http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BEcheck/{username}'
-    respponse  = requests.get(url)        
+    url= f'http://{app.config['BE_SERVER']}:{app.config['BE_PORT']}/BEcheck'
+
+    data={
+        'username':username
+    }
+    headers = {
+            'Content-Type': 'application/json'
+        }
+    respponse  = requests.get(url, headers=headers, data=json.dumps(data))         
     info=respponse.json()
     globalInfo['runInfo']=f"{info['start_date_time']} ,{info['numberOfDomains']}"          
     return info
