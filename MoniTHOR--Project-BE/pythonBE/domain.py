@@ -10,7 +10,7 @@ def add_domain (userName,domain) :
     successMessage = { 'message' : "Domain successfully added"}
     failureMessageExist = { 'message' : "Domain already exist in file"}
     failureMessageNotValid = { 'message' : "Invalid Domain Name"}
-    failureMessageExistListisFull = {{ 'message' : "List of domain is full"}}
+    failureMessageExistListisFull = { 'message' : "List of domains is full"}
     
     domain=domain.replace('"','')
     
@@ -59,6 +59,7 @@ def remove_domain (userName,domain) :
 def add_bulk(userName,fileName):
     fileName=fileName.replace('"','')
     logger.debug(f"File: {fileName}, User: {userName}")
+    
 
     
     if not os.path.exists(fileName):

@@ -227,9 +227,14 @@ if __name__ == "__main__":
     gp=generate_password()
     # test_single_domain_upload_and_verifcation(gp)
     test_file_upload(gp)  
+    time.sleep(10)
     schedule_job(gp)
+    time.sleep(10)
     test_file_upload(gp)  
+    time.sleep(10)
     remove_doamins('apple.com',gp)  # remove specific doamin 
+    time.sleep(10)
     remove_doamins('ALL',gp)  # remove all domains 
+    
     quit()
 

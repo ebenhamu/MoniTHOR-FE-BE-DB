@@ -197,7 +197,7 @@ def upload_file():
         add_from_file(filepath, username)
         
         if os.path.exists(filepath):
-            os.remove(filepath)
+            os.remove(filepath)            
         
         return {'message': 'File successfully uploaded', 'file': filepath}
     
