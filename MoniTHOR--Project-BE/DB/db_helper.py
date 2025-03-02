@@ -78,7 +78,11 @@ def db_is_user_exist(username):
     query = "SELECT 1 FROM users WHERE username = %s"
     data = db.get_data(query, (username,))
     db.close()
-    return len(data) > 0
+    try:
+        status=len(data) > 0
+    except:
+        status=0
+    return status
     
 
 def db_update_domain(username, domain_name, status_code, ssl_expiration, ssl_issuer):        
