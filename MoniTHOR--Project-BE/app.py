@@ -6,7 +6,9 @@ import os
 from datetime import datetime 
 from flask_cors import CORS
 from logger.utils  import Utils
-from DB.db_helper import db_get_domains,db_update_domains
+from DB.db_helper import db_get_domains,db_add_user,db_is_user_exist
+from pythonBE.domain import add_domain
+from pythonBE.init_test_data import generate_users_and_domains,generate_users_with_one_domain
 
 
 
@@ -199,9 +201,20 @@ def upload_file():
         return {'error': 'An error occurred during file upload'}, 500
 
 
+@app.route('/BEInitTestData', methods=['GET', 'POST'])
+@utils.measure_this
+def init_test_data():
+    generate_users_and_domains('./userdata/Domains_for_upload.txt',10)    
+    generate_users_with_one_domain('./userdata/Domains_for_upload.txt',10)    
+    return "Finished"
+
 def Checkjob(username):    
     globalInfo["runInfo"]=check_liveness.livness_check (username)    
     return  globalInfo["runInfo"]
+
+
+
+
 
 if __name__ == '__main__':
     app.run(host=app.config['HOST'], port=app.config['BE_PORT'], debug=app.config['FLASK_DEBUG'])
