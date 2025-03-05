@@ -18,9 +18,11 @@ class MyUser(HttpUser):
     def about_page(self):
         # Define character set (only digits)
         all_characters = '0123456789'
+        random_number = random.randint(1, 10)
+        tag = str(random_number).zfill(2)
         # Generate a random password
-        tag = ''.join(random.choice(all_characters) for _ in range(2))
-        username='tester1_'+tag
+        #tag = ''.join(random.choice(all_characters) for _ in range(2))
+        username='tester_'+tag
         
         url= f"http://127.0.0.1:5000/BEcheck"
         data={

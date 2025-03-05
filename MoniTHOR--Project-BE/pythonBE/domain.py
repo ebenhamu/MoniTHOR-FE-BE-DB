@@ -2,7 +2,7 @@ import os
 import json
 import re
 from logger.logs import logger
-from DB.db_helper import db_add_domain,db_remove_domain,db_get_domains,db_update_domain
+from DB.db_helper import db_add_domain_for_user,db_get_domains,db_update_domains
 
 
 def add_domain (userName,domain) :
@@ -16,20 +16,15 @@ def add_domain (userName,domain) :
     
     if not is_valid_domain(domain):
         return failureMessageNotValid
-
-    
-    
-    currentListOfDomains=db_get_domains(userName)      
-
+   
+    domains=db_get_domains(userName)[0][0]  
        
-    for d in currentListOfDomains :             
-        if d[0] == domain:            
-            return failureMessageExist
-
+    for d in domains:
+        if (d['domain']==domain):
+                return failureMessageExist       
     
-    
-    if len(currentListOfDomains) < 100 :        
-        db_add_domain(userName,domain)              
+    if (len(domains)) < 100 :                
+        db_add_domain_for_user(userName,domain)
         return successMessage
     else:
         failureMessageExistListisFull
@@ -42,18 +37,23 @@ def remove_domain (userName,domain) :
     successMessage = { 'message' : "Domain successfully removed"}
     errorOnRemoveMessage = { 'message' : "Error in remove domain from DB"}
     failureMessageNotValid = { 'message' : "Invalid Domain Name"}
+    notInFileMessage = {'message' : "Not in list"}
         
     domain=domain.replace('"','')
     
     if not is_valid_domain(domain):
         return failureMessageNotValid   
      
-    try:   
-        db_remove_domain(userName,domain)       
-        return successMessage
-    
-    except:
-        return errorOnRemoveMessage
+    currentListOfDomains = db_get_domains(userName)[0][0]
+    msg=notInFileMessage
+    newList=[]
+    for d in currentListOfDomains :        
+        if d['domain'] == domain:
+            msg=successMessage
+        else:
+            newList.append(d) 
+    db_update_domains(userName,newList)   
+    return msg
 # function to read from file a list of domain and add to domain file.
 
 def add_bulk(userName,fileName):

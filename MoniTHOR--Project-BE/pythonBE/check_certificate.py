@@ -31,6 +31,6 @@ def certificate_check(url):
         return expiry_date_formatted , issuer
         
     except Exception as e:
-        return 'failed', str(e)
+        return 'FAILED', str(e)
 
 

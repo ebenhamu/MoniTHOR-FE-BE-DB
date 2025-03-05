@@ -1,7 +1,7 @@
 import os
 import json
 from logger.logs import logger
-from  DB.db_helper import db_add_user,get_user_password,db_is_user_exist
+from  DB.db_helper import db_add_user,db_get_password,db_is_user_exist
 
   
 def register_user (userName,password1,password2) :
@@ -39,7 +39,7 @@ def login_user (userName,password) :
 
     # get user password from DB
     logger.info("Getting user password from DB")
-    if (password==get_user_password(userName)):
+    if (password==db_get_password(userName)):
         return successMessage
     else:
         return failureMessage

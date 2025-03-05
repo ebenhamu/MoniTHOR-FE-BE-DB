@@ -6,7 +6,9 @@ import os
 from datetime import datetime 
 from flask_cors import CORS
 from logger.utils  import Utils
-from DB.db_helper import db_get_domains
+from DB.db_helper import db_get_domains,db_update_domains
+
+
 
 utils = Utils()
 
@@ -54,16 +56,7 @@ def BEresults(username):
     if user.is_user_exist(username)['message']!="User exist" :        
         return "No User is logged in" 
     else:   
-        data = db_get_domains(username)   
-
-    data = [
-    {
-        'domain': domain[0],
-        'status_code': domain[1],
-        'ssl_expiration': domain[2],
-        'ssl_Issuer': domain[3]
-    }
-    for domain in data ]
+        data = db_get_domains(username)[0][0]
 
     #data= json.dumps(data, indent=4)     
     

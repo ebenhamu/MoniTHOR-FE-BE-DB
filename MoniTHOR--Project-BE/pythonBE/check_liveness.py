@@ -7,7 +7,7 @@ import time
 from pythonBE import check_certificate 
 import os
 from logger.logs import logger
-from DB.db_helper import db_update_domain , db_get_domains
+from DB.db_helper import db_update_domain,db_get_domains,db_update_domains
 
 # livness and ssl info function , for single domain file "all=False" , for domains file "all=True"
 # function will read Domain/Domains file and will update relevant fields in file 
@@ -22,10 +22,10 @@ def livness_check (username):
     analyzed_urls_queue = Queue()                 
    
     data = db_get_domains(username)      
-
-    for d in data :        
-        urls_queue.put(d[0]) 
-         
+    domains=db_get_domains(username)[0][0]
+    for d in domains:
+        urls_queue.put(d['domain'])
+          
     numberOfDomains=urls_queue.qsize()
     logger.info(f"Total URLs to check: {numberOfDomains}")
 
@@ -62,7 +62,9 @@ def livness_check (username):
             analyzed_urls_queue.task_done()
 
        # Write results to JSON file
-   
+    
+        db_update_domains(username,results)
+        
 
     # Run URL checks in parallel
     with concurrent.futures.ThreadPoolExecutor(max_workers=100) as liveness_threads_pool:
@@ -70,7 +72,7 @@ def livness_check (username):
         futures = [liveness_threads_pool.submit(check_url) for _ in range(100)]
         # Generate report after tasks complete
         liveness_threads_pool.submit(generate_report)
-
+    
     urls_queue.join()  # Ensure all URLs are processed
 
     # Measure end time
@@ -79,20 +81,8 @@ def livness_check (username):
 
     logger.debug(f"URL liveness check complete in {elapsed_time:.2f} seconds.")
     
-
-    data = db_get_domains(username)   
-
-    results = [
-    {
-        'domain': domain[0],
-        'status_code': domain[1],
-        'ssl_expiration': domain[2],
-        'ssl_Issuer': domain[3]
-    }
-    for domain in data ]
-
-
-
+    results = db_get_domains(username)[0][0]  
+    
     start_date_time=start_date_time+' (UTC)'
     resultsData={ 'results':results,'start_date_time':start_date_time,'numberOfDomains':str(numberOfDomains) }
     return resultsData
