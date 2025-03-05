@@ -137,12 +137,18 @@ def db_get_password(username):
     return data[0][0]
     
 def db_add_user(username, password):
+    
     db = PostgresDB("storedb", "myuser", "mypassword")
-    db.connect()
+    db.connect()    
     query = "INSERT INTO users (username, password) VALUES (%s, %s)"
     data = (username, password)
     db.update_data(query, data)
     db.close()
+    if (db_is_user_exist(username)):
+        return True
+    else:
+        return False
+    
     
     
 def db_is_user_exist(username):

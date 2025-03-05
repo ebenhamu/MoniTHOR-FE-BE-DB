@@ -45,7 +45,7 @@ async function handleLogin(event) {
 
             window.location.href = '/dashboard'; // Redirect after successful login
         } else {
-            alert('Invalid username or password!');
+            alert(data.message);
         }
     } catch (error) {
         console.error('Error during login:', error);

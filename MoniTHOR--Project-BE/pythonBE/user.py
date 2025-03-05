@@ -10,6 +10,7 @@ def register_user (userName,password1,password2) :
     failureMessage = {'message' : "Username already taken"}
     emptyMessage = {'message' : "Username or password is Empty"}
     passwordMessage = {'message' : "Passwords do not match"}
+    dbAccessError = {'message' : "DB Access error"}
 
     
     if password1 != password2:
@@ -24,9 +25,11 @@ def register_user (userName,password1,password2) :
     
 
     
-    db_add_user(userName,password1)
-    logger.info(f'New User is created - {userName}')       
-    return successMessage
+    if (db_add_user(userName,password1)):
+        logger.info(f'New User is created - {userName}')       
+        return successMessage
+    else:
+        return dbAccessError
 
 
 # Login function
@@ -34,15 +37,22 @@ def login_user (userName,password) :
         
     logger.debug(f'Login Functions is invoked with User:{userName}')
     successMessage = { 'message' : "Login Successful"}
-    failureMessage = { 'message' : "error : invalid user name or password"}        
+    failureMessage = { 'message' : "Error : invalid user name or password"}      
+    dbAccessError =   { 'message' : "Error : DB access error "}
+    
+    
+    try:
+        # get user password from DB
+        logger.info("Getting user password from DB")
+        if (password==db_get_password(userName)):
+            return successMessage
+        else:
+            print("DDDDDDD",db_get_password(userName))
+            return failureMessage
+    except : 
+        return dbAccessError
     
 
-    # get user password from DB
-    logger.info("Getting user password from DB")
-    if (password==db_get_password(userName)):
-        return successMessage
-    else:
-        return failureMessage
 
 
     

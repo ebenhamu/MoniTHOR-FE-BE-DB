@@ -48,7 +48,7 @@ def BElogin():
             return jsonify({"message": "Login Successful"})
         else:
             logger.info(f"User: {username} Login Failed")
-            return jsonify({"message": "Invalid username or password!"}), 401
+            return jsonify({"message": status['message']}), 401
     return jsonify({"message": "Bad Request"}), 400
 
 
