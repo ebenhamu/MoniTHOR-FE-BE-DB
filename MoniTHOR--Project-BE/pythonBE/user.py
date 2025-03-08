@@ -50,8 +50,7 @@ def login_user (userName,password) :
         logger.info("Getting user password from DB")
         if (password==db_get_password(userName)):
             return successMessage
-        else:
-            print("DDDDDDD",db_get_password(userName))
+        else:            
             return failureMessage
     except : 
         return dbAccessError
