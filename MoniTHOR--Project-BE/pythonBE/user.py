@@ -39,7 +39,11 @@ def login_user (userName,password) :
     successMessage = { 'message' : "Login Successful"}
     failureMessage = { 'message' : "Error : invalid user name or password"}      
     dbAccessError =   { 'message' : "Error : DB access error "}
-    
+    try:
+        if not db_is_user_exist(userName):
+            return failureMessage
+    except:
+        return dbAccessError
     
     try:
         # get user password from DB
